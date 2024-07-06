@@ -7,15 +7,12 @@ const port = 3000;
 app.set('views', path.join(__dirname, 'views'))
 app.set('view engine', 'pug')
 
-app.get('/', (req, res) => {
-  res.render('index', {title: 'Bienvenido', message: '¡Hola Mundo!'})
-})
-
 app.get('/',async (req, res) => {
   try {
     const hpApi = await axios.get("https://hp-api.onrender.com/api/characters")
     res.json(hpApi.data)
-    //console.log(hpApi.data)
+    res.render('index', {title: 'Bienvenido', message: '¡Hola Mundo!', personajes: hpApi.data})
+    console.log(hpApi.data)
   } catch (err) {
     console.error(err);
     res.status(500).json( {err : "Error al acceder a la api"})
