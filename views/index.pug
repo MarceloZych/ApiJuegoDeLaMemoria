@@ -1,6 +1,16 @@
 doctype html
 html 
     head
-        title= title 
+        link(href='style.css' rel='stylesheet')
+        title= title
     body
         h1= message
+        .container
+            each pj in personajes
+                .card
+                    - if (pj.estado == 'tapada')
+                        img.card-img(src='img/images.jpg')
+                    - else
+                        img.card-img(src=pj.image)
+                    
+                    h6.name-char #{pj.name}
