@@ -14,9 +14,15 @@ app.get('/',async (req, res) => {
   try {
     const hpApi = await axios.get("https://hp-api.onrender.com/api/characters")
     let pjConImg = hpApi.data.filter((pjImg) => pjImg.image != '')
-    let lista1 = pjConImg.slice(0,15)
+    /*let lista1 = pjConImg.slice(0,15)
     let lista2 = pjConImg.slice(0,15)
-    let lista3 = lista1.concat(lista2)
+    */
+   let lista3 = []
+   for (let i =0; i < 15; i++ ){
+      lista3.push(pjConImg[i])
+      lista3.push(pjConImg[i])
+    }
+    console.log(lista3);
     lista3.sort(() => Math.random() - 0.5)
     
     lista3.forEach(element => {
