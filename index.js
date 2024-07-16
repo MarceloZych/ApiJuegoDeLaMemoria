@@ -10,32 +10,58 @@ app.set('view engine', 'pug')
 
 app.use(express.static('public'))
 
-app.get('/',async (req, res) => {
+let lista3 = []
+
+app.get('/', async (req, res) => {
   try {
     const hpApi = await axios.get("https://hp-api.onrender.com/api/characters")
-    let pjConImg = hpApi.data.filter((pjImg) => pjImg.image != '')
-    let lista1 = pjConImg.slice(0,15)
-    
-   let lista3 = []
-   for (let i =0; i < 15; i++ ){
-      lista3.push(pjConImg[i])
-      lista3.push(pjConImg[i])
-    }
-    console.log(lista3);
-    lista3.sort(() => Math.random() - 0.5)
-    
-    lista3.forEach(element => {
-      element.estado = 'tapada'
+    let pjConImg = {}
+    hpApi.data.forEach(pj => {
+      if (pj.image !== '') {
+        pjConImg[pj.image] = pj
+      }
     })
-    lista3[0].estado = 'destapada'
 
-    console.log(lista3);
-    res.render('index', {title: 'Bienvenido', message: '¡Hola Mundo!', personajes: lista3})
+    let pjConImgArray = Object.values(pjConImg)
+
+    let lista1 = pjConImgArray.slice(0, 15)
+    let lista2 = pjConImgArray.slice()
+
+    lista3 = lista1.concat(lista2)
+    lista3.sort(() => Math.random() - 0.5)
+
+    lista3 = lista3.map(element => {
+      return { ...element, estado: 'tapada' }
+    })
+
+    res.render('index', {
+      title: 'Bienvenido',
+      message: '¡Hola Mundo!',
+      personajes: lista3,
+      girarCartaSeleccionada: girarCartaSeleccionada,
+    })
   } catch (err) {
     console.error(err);
-    res.status(500).json( {err : "Error al acceder a la api"})
+    res.status(500).json({ err: "Error al acceder a la api" })
   }
 })
+
+function girarCartaSeleccionada(name) {
+  const personaje = lista3.find(pj => pj.name === name)
+
+  if (personaje.estado === 'tapada') {
+    personaje.estado = 'destapada'
+  } else {
+    personaje.estado = 'tapada'
+  }
+
+  res.render('index', {
+    title: 'Bienvenido',
+    message: '¡Hola Mundo!',
+    personajes: lista3,
+    girarCartaSeleccionada: girarCartaSeleccionada,
+  })
+}
 
 app.listen(port, () => {
   console.log(`Servidor escuchando en el puerto ${port}`);
