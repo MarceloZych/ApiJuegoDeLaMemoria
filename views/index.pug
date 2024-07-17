@@ -7,7 +7,7 @@ html
         h1= message
         .container
             each pj in personajes
-                .card(onclick=`girarCartaSeleccionada('${pj.name}')`)
+                .card(data-name=pj.name, onclick='toggleCardState(this)')
                     - if (pj.estado == 'tapada')
                         img.card-img(src='img/images.jpg')
                     - else
@@ -15,3 +15,17 @@ html
                     
                     h6.name-char #{pj.name}
                     p #{pj.id}
+        script.
+            function toggleCardState(cardElement) {
+                const cardName = cardElement.getAttribute('data-name');
+                fetch(`/toggle-card-state?name=${cardName}`)
+                    .then(response => response.json())
+                    .then(data => {
+                        const imgElement = cardElement.querySelector('img.card-img');
+                        if (data.estado === 'tapada') {
+                            imgElement.src = 'img/images.jpg';
+                        } else {
+                            imgElement.src = data.image;
+                        }
+                    });
+            }

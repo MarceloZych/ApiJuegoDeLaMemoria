@@ -37,8 +37,7 @@ app.get('/', async (req, res) => {
     res.render('index', {
       title: 'Bienvenido',
       message: '¡Hola Mundo!',
-      personajes: lista3,
-      girarCartaSeleccionada: girarCartaSeleccionada,
+      personajes: lista3
     })
   } catch (err) {
     console.error(err);
@@ -46,22 +45,26 @@ app.get('/', async (req, res) => {
   }
 })
 
-function girarCartaSeleccionada(name) {
-  const personaje = lista3.find(pj => pj.name === name)
+app.get('/toggle-card-state', (req, res) => {
+  const { name } = req.query;
+  const personaje = lista3.find(pj => pj.name === name);
 
-  if (personaje.estado === 'tapada') {
-    personaje.estado = 'destapada'
+  if (personaje) {
+    if (personaje.estado === 'tapada') {
+      personaje.estado = 'destapada';
+    } else {
+      personaje.estado = 'tapada';
+    }
+
+    res.json({ 
+      estado: personaje.estado,
+      image: personaje.image
+    });
   } else {
-    personaje.estado = 'tapada'
+    res.status(404).json({ error: 'Personaje no encontrado' });
   }
+});
 
-  res.render('index', {
-    title: 'Bienvenido',
-    message: '¡Hola Mundo!',
-    personajes: lista3,
-    girarCartaSeleccionada: girarCartaSeleccionada,
-  })
-}
 
 app.listen(port, () => {
   console.log(`Servidor escuchando en el puerto ${port}`);
