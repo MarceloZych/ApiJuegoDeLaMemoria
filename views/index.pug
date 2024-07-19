@@ -7,8 +7,8 @@ html
   body
     h1= message
     .container
-      each pj in personajes
+      each pj, index in personajes
         .card
-            img.card-img(data-image=pj.image, data-status=pj.estado, src=pj.estado == 'tapada' ? 'img/images.jpg' : pj.image)
+          img.card-img(src=pj.estado == 'tapada' ? 'img/images.jpg' : pj.image, data-image=pj.image, data-status=pj.estado)
             h6.name-char #{pj.name}
-            p #{pj.house}
+            p #{pj.id}
