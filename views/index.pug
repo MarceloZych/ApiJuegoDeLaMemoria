@@ -1,32 +1,14 @@
 doctype html
-html 
-    head
-        link(href='style.css' rel='stylesheet')
-        title= title
-    body
-        h1= message
-        .container
-            each pj in personajes
-                .card(data-name=pj.name, onclick='toggleCardState(this)')
-                    - if (pj.estado == 'tapada')
-                        img.card-img(src='img/images.jpg')
-                    - else
-                        img.card-img(src=pj.image)
-                    
-                    h6.name-char #{pj.name}
-                    p #{pj.id}
-        //-JavaScript
-        script.
-            function toggleCardState(cardElement) {
-                const cardName = cardElement.getAttribute('data-name');
-                fetch(`/toggle-card-state?name=${cardName}`)
-                    .then(response => response.json())
-                    .then(data => {
-                        const imgElement = cardElement.querySelector('img.card-img');
-                        if (data.estado === 'tapada') {
-                            imgElement.src = 'img/images.jpg';
-                        } else {
-                            imgElement.src = data.image;
-                        }
-                    });
-            }
+html
+  head
+    link(href='style.css' rel='stylesheet')
+    title= title
+    script(src='flipCard.js')
+  body
+    h1= message
+    .container
+      each pj, index in personajes
+        .card
+          img.card-img(src=pj.estado == 'tapada' ? 'img/images.jpg' : pj.image, data-image=pj.image)
+          h6.name-char #{pj.name}
+          p #{pj.id}

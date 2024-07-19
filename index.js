@@ -40,32 +40,11 @@ app.get('/', async (req, res) => {
       personajes: lista3
     })
   } catch (err) {
-    console.error(err);
+    console.error(err)
     res.status(500).json({ err: "Error al acceder a la api" })
   }
 })
 
-app.get('/toggle-card-state', (req, res) => {
-  const { name } = req.query;
-  const personaje = lista3.find(pj => pj.name === name);
-
-  if (personaje) {
-    if (personaje.estado === 'tapada') {
-      personaje.estado = 'destapada';
-    } else {
-      personaje.estado = 'tapada';
-    }
-
-    res.json({ 
-      estado: personaje.estado,
-      image: personaje.image
-    });
-  } else {
-    res.status(404).json({ error: 'Personaje no encontrado' });
-  }
-});
-
-
 app.listen(port, () => {
-  console.log(`Servidor escuchando en el puerto ${port}`);
+  console.log(`Servidor escuchando en el puerto ${port}`)
 })
