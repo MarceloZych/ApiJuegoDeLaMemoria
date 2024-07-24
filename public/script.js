@@ -6,7 +6,12 @@ document.addEventListener('DOMContentLoaded', () => {
   registerForm.addEventListener('submit', (event) => {
     event.preventDefault();
 
-    const formData = new formData(registerForm);
+    const formData = new FormData(registerForm);
+    jugador = {
+      name: formData.get('name'),
+      surname: formData.get('surname'),
+      email: formData.get('email')
+    }
     fetch('/', {
       method: 'POST',
       body: formData
@@ -15,13 +20,13 @@ document.addEventListener('DOMContentLoaded', () => {
       container.classList.remove('hidden');
       scoreboard.classList.remove('hidden');
       startGame();
-    })
-  })
+    });
+  });
 
   const cards = document.querySelectorAll('.card');
   let selectedCards = [];
   let lockBoard = false;
-  let attemps = 0;
+  let attempts = 0;
   let score = 0;
   let pairsFound = 0;
   const totalPairs = cards.length / 2;
@@ -42,7 +47,7 @@ document.addEventListener('DOMContentLoaded', () => {
       cards.forEach(card => card.querySelector('.card-img').setAttribute('src', 'img/images.jpg'));
     }
     attemps++;
-    document.getElementById('attemps').textContent = `Intento Número ${attemps}`
+    document.getElementById('attempts').textContent = `Intento Número ${attempts}`
   }
 
   function startGame() {
@@ -89,20 +94,3 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   }
 });
-/**
- * 
-function endGame() {
-clearInterval(intervalId);
-alert(`¡Felicidades! Termiaste el juego con un puntaje de ${score}`)
-
-fetch('/save-game', {
-method: 'POST',
-headers: {
-  'Content-Type': 'application/json'
-},
-body: JSON.stringify({ jugador, score })
-}).then(() => {
-
-})
-}
- */

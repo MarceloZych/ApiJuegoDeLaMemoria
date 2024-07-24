@@ -6,7 +6,7 @@ const fs = require('fs')
 const app = express()
 const port = 3000
 
-const partidasFile = 'partidas.json'
+const partidasFile = path.join(__dirname, 'partidas.json')  
 
 app.set('views', path.join(__dirname, 'views'))
 app.set('view engine', 'pug')
