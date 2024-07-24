@@ -1,0 +1,20 @@
+doctype html
+html
+    head 
+        title Mejores Partidas 
+    body
+        h1  Mejores Partidas
+        table
+            tr
+                th Nombre
+                th Apellido
+                th Email
+                th Puntaje
+                th Fecha
+            each partida in partidas
+                tr
+                    td= partida.jugador.name
+                    td= partida.jugador.surname
+                    td= partida.jugador.email
+                    td= partida.score
+                    td= new Date(partida.date).toLocaleString()
