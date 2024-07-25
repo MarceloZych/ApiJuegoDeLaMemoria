@@ -30,6 +30,7 @@ document.addEventListener('DOMContentLoaded', () => {
     let pairsFound = 0;
     const totalPairs = cards.length / 2;
     let startTime = Date.now();
+    let jugador;
 
     function checkForMatch(cards) {
       const img1 = cards[0].querySelector('.card-img').getAttribute('data-image');
@@ -86,7 +87,7 @@ document.addEventListener('DOMContentLoaded', () => {
         headers: {
           'Content-Type': 'application/json'
         },
-        body: JSON.stringify({ score })
+        body: JSON.stringify({ jugador, score })
       }).then(() => {
         window.location.href = '/top-score';
       });

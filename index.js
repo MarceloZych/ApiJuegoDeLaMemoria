@@ -45,8 +45,8 @@ app.get('/game', async (req, res) => {
 
     let pjConImgArray = Object.values(pjConImg)
 
-    let lista1 = pjConImgArray.slice(0, 15)
-    let lista2 = pjConImgArray.slice(0, 15)
+    let lista1 = pjConImgArray.slice(0, 2)
+    let lista2 = pjConImgArray.slice(0, 2)
 
     lista3 = lista1.concat(lista2)
     lista3.sort(() => Math.random() - 0.5)
@@ -59,6 +59,7 @@ app.get('/game', async (req, res) => {
       title: 'El juego de la memoria de Harry Potter',
       message: '-Elige una carta\r -Busca la carta que sea exactamente igual a la que elegiste\r -¡Sí coinciden sumá puntos!',
       personajes: lista3,
+      jugador: jugador
     })
   } catch (err) {
     console.error(err)
@@ -84,9 +85,11 @@ app.post('/save-game', (req, res) => {
 app.get('/top-score', (req, res) => {
   let partidas = [];
   if (fs.existsSync(partidasFile)){
-    partidas = JSON.parse(fs.readFileSync(partidasFile));
+    const rawData = fs.readFileSync(partidasFile, 'utf-8')
+    partidas = JSON.parse(rawData);
   }
-  res.render('top-scores', { partidas });
+  partidas = partidas.filter(partida => partida.jugador && partida.jugador.name && partida.jugador.surname && partida.jugador.email);
+  res.render('top-score', { partidas });
 })
 
 // Funciones
@@ -95,7 +98,8 @@ function saveGameData(jugador, score) {
   let partidas = [];
 
   if (fs.existsSync(partidasFile)) {
-    partidas = JSON.parse(fs.readFileSync(partidasFile))
+    const rawData = fs.readFileSync(partidasFile)
+    partidas = JSON.parse(rawData)
   }
 
   partidas.push(partida);
