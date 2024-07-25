@@ -3,57 +3,55 @@ document.addEventListener('DOMContentLoaded', () => {
   const container = document.querySelector('.container');
   const scoreboard = document.querySelector('.scoreboard');
 
-  registerForm.addEventListener('submit', (event) => {
-    event.preventDefault();
+  if (registerForm) {
+    registerForm.addEventListener('submit', (event) => {
+      event.preventDefault();
 
-    const formData = new FormData(registerForm);
-    jugador = {
-      name: formData.get('name'),
-      surname: formData.get('surname'),
-      email: formData.get('email')
-    }
-    fetch('/', {
-      method: 'POST',
-      body: formData
-    }).then(() => {
-      registerForm.classList.add('hidden');
-      container.classList.remove('hidden');
-      scoreboard.classList.remove('hidden');
-      startGame();
+      const formData = new FormData(registerForm);
+      fetch('/register', {
+        method: 'POST',
+        body: formData
+      }).then(() => {
+        window.location.href = '/game';
+      });
     });
-  });
+  }
 
-  const cards = document.querySelectorAll('.card');
-  let selectedCards = [];
-  let lockBoard = false;
-  let attempts = 0;
-  let score = 0;
-  let pairsFound = 0;
-  const totalPairs = cards.length / 2;
-  let startTime = Date.now();
-
-  function checkForMatch(cards) {
-    const img1 = cards[0].querySelector('.card-img').getAttribute('data-image');
-    const img2 = cards[1].querySelector('.card-img').getAttribute('data-image');
-
-    if (img1 === img2) {
-      cards.forEach(card => card.querySelector('.card-img').setAttribute('data-status', 'destapada'));
-      score += Date.now() - startTime + attemps;
-      pairsFound++;
-      if (pairsFound === totalPairs) {
-        endGame();
-      }
-    } else {
-      cards.forEach(card => card.querySelector('.card-img').setAttribute('src', 'img/images.jpg'));
-    }
-    attemps++;
-    document.getElementById('attempts').textContent = `Intento Número ${attempts}`
+  if (container) {
+    startGame();
   }
 
   function startGame() {
+    const cards = document.querySelectorAll('.card');
+    let selectedCards = [];
+    let lockBoard = false;
+    let attempts = 0;
+    let score = 0;
+    let pairsFound = 0;
+    const totalPairs = cards.length / 2;
+    let startTime = Date.now();
+
+    function checkForMatch(cards) {
+      const img1 = cards[0].querySelector('.card-img').getAttribute('data-image');
+      const img2 = cards[1].querySelector('.card-img').getAttribute('data-image');
+
+      if (img1 === img2) {
+        cards.forEach(card => card.querySelector('.card-img').setAttribute('data-status', 'destapada'));
+        score += Date.now() - startTime + attempts;
+        pairsFound++;
+        if (pairsFound === totalPairs) {
+          endGame();
+        }
+      } else {
+        cards.forEach(card => card.querySelector('.card-img').setAttribute('src', 'img/images.jpg'));
+      }
+      attempts++;
+      document.getElementById('attempts').textContent = `Intento Número ${attempts}`;
+    }
+
     const intervalId = setInterval(() => {
       const timeElapsed = Math.floor((Date.now() - startTime) / 1000);
-      document.getElementById('time').textContent = `Contador de segundos ${timeElapsed}`
+      document.getElementById('time').textContent = `Contador de segundos: ${timeElapsed}`;
     }, 1000);
 
     cards.forEach(card => {
@@ -78,6 +76,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
       });
     });
+
     function endGame() {
       clearInterval(intervalId);
       alert(`¡Felicidades! Terminaste el juego con un puntaje de ${score}.`);
@@ -87,10 +86,10 @@ document.addEventListener('DOMContentLoaded', () => {
         headers: {
           'Content-Type': 'application/json'
         },
-        body: JSON.stringify({ jugador, score })
+        body: JSON.stringify({ score })
       }).then(() => {
         window.location.href = '/top-score';
-      })
+      });
     }
   }
 });

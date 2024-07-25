@@ -18,7 +18,22 @@ let lista3 = []
 let jugador = {}
 
 // Rutas
-app.get('/', async (req, res) => {
+app.get('/', (req, res) => {
+  res.render('register', {
+    title: 'Registro del jugador'
+  })
+})
+
+app.post('/register', (req, res) => {
+  jugador = {
+    name: req.body.name,
+    surname: req.body.surname,
+    email: req.body.email
+  }
+  res.redirect('/game')
+})
+
+app.get('/game', async (req, res) => {
   try {
     const hpApi = await axios.get("https://hp-api.onrender.com/api/characters")
     let pjConImg = {}
@@ -88,6 +103,9 @@ function saveGameData(jugador, score) {
   partidas = partidas.slice(0, 20);// limitar a 20 jugadores
 
   fs.writeFileSync(partidasFile, JSON.stringify(partidas, null, 2));
+
+  console.log('Partida guardada:', partida);
+  console.log('Partidas actuales:', partidas);
 }
 
 app.listen(port, () => {

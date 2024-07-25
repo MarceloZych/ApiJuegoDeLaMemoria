@@ -1,0 +1,19 @@
+doctype html
+html
+  head
+    link(href='style.css' rel='stylesheet')
+    script(src='script.js')
+    title= title
+  body
+    h1= title
+    form#registerForm(action='/register', method='POST')
+      label(for='name') Nombre:
+      input#name(type='text', name='name', required)
+      br
+      label(for='surname') Apellido:
+      input#surname(type='text', name='surname', required)
+      br
+      label(for='email') Email:
+      input#email(type='email', name='email', required)
+      br
+      button(type='submit') Comenzar Juego

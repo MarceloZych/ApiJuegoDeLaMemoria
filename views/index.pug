@@ -7,18 +7,7 @@ html
   body
     h1= title 
     p= message
-
-    form#registerForm(action='/', method='POST')
-      label(for='name') Nombre:
-      input#name(type='text', name='name', required)
-      br
-      label(for='surname') Apellido:
-      input#surname(type='text', name='surname', required)
-      br
-      label(for='email') Email: 
-      input#email(type='email', name='email', required)
-      br
-      button(type='submit') Comenzar Juego
+    
     .container.hidden
       each pj, index in personajes
         .card
