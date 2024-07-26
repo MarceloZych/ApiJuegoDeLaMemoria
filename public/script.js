@@ -1,7 +1,10 @@
+const { name } = require("pug");
+
 document.addEventListener('DOMContentLoaded', () => {
   const registerForm = document.getElementById('registerForm');
   const container = document.querySelector('.container');
   const scoreboard = document.querySelector('.scoreboard');
+  let jugador = {};
 
   if (registerForm) {
     registerForm.addEventListener('submit', (event) => {
@@ -12,6 +15,11 @@ document.addEventListener('DOMContentLoaded', () => {
         method: 'POST',
         body: formData
       }).then(() => {
+        jugador = {
+          name: document.getElementById('name').value,
+          surname: document.getElementById('surname').value,
+          email: document.getElementById('email').value
+        };
         window.location.href = '/game';
       });
     });
@@ -30,7 +38,6 @@ document.addEventListener('DOMContentLoaded', () => {
     let pairsFound = 0;
     const totalPairs = cards.length / 2;
     let startTime = Date.now();
-    let jugador;
 
     function checkForMatch(cards) {
       const img1 = cards[0].querySelector('.card-img').getAttribute('data-image');
@@ -87,7 +94,7 @@ document.addEventListener('DOMContentLoaded', () => {
         headers: {
           'Content-Type': 'application/json'
         },
-        body: JSON.stringify({ jugador, score })
+        body: JSON.stringify({ jugador: jugador, score: score })
       }).then(() => {
         window.location.href = '/top-score';
       });
