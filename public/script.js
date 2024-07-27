@@ -86,7 +86,7 @@ document.addEventListener('DOMContentLoaded', () => {
         headers: {
           'Content-Type': 'application/json'
         },
-        body: JSON.stringify({ score })
+        body: JSON.stringify({ jugador,score })
       }).then(() => {
         window.location.href = '/top-score';
       });

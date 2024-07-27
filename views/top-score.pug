@@ -13,8 +13,13 @@ html
                 th Fecha
             each partida in partidas
                 tr
-                    td= partida.jugador.name
-                    td= partida.jugador.surname
-                    td= partida.jugador.email
+                    if partida.jugador
+                        td= partida.jugador.name
+                        td= partida.jugador.surname
+                        td= partida.jugador.email
+                    else 
+                        td N/A
+                        td N/A
+                        td N/A
                     td= partida.score
                     td= new Date(partida.date).toLocaleString()

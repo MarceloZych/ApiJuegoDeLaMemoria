@@ -1,26 +1,8 @@
 [
   {
-    "jugador": {
-      "name": "Juan",
-      "surname": "Pérez",
-      "email": "juan.perez@example.com"
-    },
-    "score": 120,
-    "date": "2023-07-17T12:34:56.789Z"
+    "date": "2024-07-27T18:52:03.606Z"
   },
   {
-    "jugador": {
-      "name": "Ana",
-      "surname": "García",
-      "email": "ana.garcia@example.com"
-    },
-    "score": 140,
-    "date": "2023-07-18T13:14:56.789Z"
-  },
-  {
-    "date": "2024-07-26T16:53:03.051Z"
-  },
-  {
-    "date": "2024-07-26T17:01:09.089Z"
+    "date": "2024-07-27T19:31:18.597Z"
   }
 ]

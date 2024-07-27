@@ -22,16 +22,16 @@ app.get('/', (req, res) => {
   res.render('register', {
     title: 'Registro del jugador'
   })
-})
+})  
 
 app.post('/register', (req, res) => {
   jugador = {
     name: req.body.name,
     surname: req.body.surname,
     email: req.body.email
-  }
-  res.redirect('/game')
-})
+  };
+  res.redirect('/game'); // Redirigir a la página del juego
+});
 
 app.get('/game', async (req, res) => {
   try {
@@ -59,6 +59,7 @@ app.get('/game', async (req, res) => {
       title: 'El juego de la memoria de Harry Potter',
       message: '-Elige una carta\r -Busca la carta que sea exactamente igual a la que elegiste\r -¡Sí coinciden sumá puntos!',
       personajes: lista3,
+      jugador: jugador
     })
   } catch (err) {
     console.error(err)
@@ -77,6 +78,8 @@ app.post('/', (req, res) => {
 
 app.post('/save-game', (req, res) => {
   const { jugador, score } = req.body;
+  console.log('jugador recibido', jugador);
+  console.log('puntuacion recibida', score);
   saveGameData(jugador, score);
   res.status(200).send('Game data saved')
 });
