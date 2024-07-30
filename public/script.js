@@ -1,24 +1,24 @@
 document.addEventListener('DOMContentLoaded', () => {
   const registerForm = document.getElementById('registerForm');
   const container = document.querySelector('.container');
-  const scoreboard = document.querySelector('.scoreboard');
 
   if (registerForm) {
-    registerForm.addEventListener('submit', (event) => {
-      event.preventDefault();
-
-      const formData = new FormData(registerForm);
-      fetch('/register', {
-        method: 'POST',
-        body: formData
-      }).then(() => {
-        window.location.href = '/game';
-      });
-    });
+    registerForm.addEventListener('submit', handleRegister)
   }
 
   if (container) {
     startGame();
+  }
+
+  function handleRegister(event) {
+    event.preventDefault()
+    const formData = new FormData(registerForm)
+    fetch('/register', {
+      method: 'POST',
+      body: formData
+    }).then(() => {
+      window.location.href = '/game'
+    })
   }
 
   function startGame() {
@@ -31,65 +31,63 @@ document.addEventListener('DOMContentLoaded', () => {
     const totalPairs = cards.length / 2;
     let startTime = Date.now();
 
-    function checkForMatch(cards) {
-      const img1 = cards[0].querySelector('.card-img').getAttribute('data-image');
-      const img2 = cards[1].querySelector('.card-img').getAttribute('data-image');
-
-      if (img1 === img2) {
-        cards.forEach(card => card.querySelector('.card-img').setAttribute('data-status', 'destapada'));
-        score += Date.now() - startTime + attempts;
-        pairsFound++;
-        if (pairsFound === totalPairs) {
-          endGame();
-        }
-      } else {
-        cards.forEach(card => card.querySelector('.card-img').setAttribute('src', 'img/images.jpg'));
-      }
-      attempts++;
-      document.getElementById('attempts').textContent = `Intento Número ${attempts}`;
-    }
-
     const intervalId = setInterval(() => {
-      const timeElapsed = Math.floor((Date.now() - startTime) / 1000);
-      document.getElementById('time').textContent = `Contador de segundos: ${timeElapsed}`;
-    }, 1000);
+      const timeElapsed = Math.floor((Date.now() - startTime) / 1000)
+      document.getElementById('time').textContent = `Contador de segundos: ${timeElapsed}`
+    }, 1000)
 
     cards.forEach(card => {
-      card.addEventListener('click', () => {
-        if (lockBoard) return;
+      card.addEventListener('click', () => handleCardClick(card, 
+        selectedCards, lockBoard, attempts, score, totalPairs, intervalId))
+    })
+  }
 
-        const img = card.querySelector('.card-img');
-        const imgSrc = img.getAttribute('data-image');
+  function handleCardClick(card, selectedCards, lockBoard, attempts, score, totalPairs, intervalId) {
+    if (lockBoard) return;
 
-        if (img.getAttribute('src') === 'img/images.jpg') {
-          img.setAttribute('src', imgSrc);
-          selectedCards.push(card);
-        }
+    const img = card.querySelector('.card-img')
+    const imgSrc = img.getAttribute('data-image')
 
-        if (selectedCards.length === 2) {
-          lockBoard = true;
-          setTimeout(() => {
-            checkForMatch(selectedCards);
-            selectedCards = [];
-            lockBoard = false;
-          }, 1000);
-        }
-      });
-    });
-
-    function endGame() {
-      clearInterval(intervalId);
-      alert(`¡Felicidades! Terminaste el juego con un puntaje de ${score}.`);
-
-      fetch('/save-game', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({ jugador,score })
-      }).then(() => {
-        window.location.href = '/top-score';
-      });
+    if (selectedCards.length === 2) {
+      lockBoard = true
+      setTimeout(() => {
+        checkForMatch(selectedCards, score, totalPairs, intervalId)
+        selectedCards.length = 0
+        lockBoard = false
+      }, 1000)
     }
+  }
+
+  function checkForMatch(cards, score, totalPairs, intervalId) {
+    const img1 = cards[0].querySelector('.card-img').getAttribute('data-image')
+    const img2 = cards[1].querySelector('.card-img').getAttribute('data-image')
+
+    if (img1 === img2) {
+      cards.forEach(card => card.querySelector('.card-img').setAttribute('data-status', 'destapada'))
+      score += Date.now() - startTime + attempts
+      pairsFound++
+      if (pairsFound === totalPairs) {
+        endGame(score, intervalId)
+      }
+    } else {
+      cards.forEach(card => card.querySelector('.card-img').setAttribute('src', 'img/image.jpg'))
+    }
+    attempts++
+    document.getElementById('attemps').textContent = `Intento número ${attempts}`
+  }
+
+  function endGame(score, intervalId) {
+    clearInterval(intervalId)
+    alert(`¡Felicidades!  Terminaste el juego con un puntaje de ${score}`)
+
+    fetch('/save-game', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ jugador, score })
+    }).then(() => {
+      window.location.href = '/top-score'
+    })
   }
 });

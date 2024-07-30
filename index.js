@@ -3,10 +3,10 @@ const axios = require('axios')
 const path = require('path')
 const bodyParser = require('body-parser')
 const fs = require('fs')
+
 const app = express()
 const port = 3000
-
-const partidasFile = path.join(__dirname, 'partidas.json')  
+const partidasFile = path.join(__dirname, 'partidas.json')
 
 app.set('views', path.join(__dirname, 'views'))
 app.set('view engine', 'pug')
@@ -14,15 +14,15 @@ app.set('view engine', 'pug')
 app.use(express.static('public'))
 app.use(express.urlencoded({ extended: true }))
 
-let lista3 = []
 let jugador = {}
+let lista3 = []
 
 // Rutas
 app.get('/', (req, res) => {
   res.render('register', {
     title: 'Registro del jugador'
   })
-})  
+})
 
 app.post('/register', (req, res) => {
   jugador = {
@@ -35,30 +35,12 @@ app.post('/register', (req, res) => {
 
 app.get('/game', async (req, res) => {
   try {
-    const hpApi = await axios.get("https://hp-api.onrender.com/api/characters")
-    let pjConImg = {}
-    hpApi.data.filter(pj => {
-      if (pj.image !== '') {
-        pjConImg[pj.image] = pj
-      }
-    })
-
-    let pjConImgArray = Object.values(pjConImg)
-
-    let lista1 = pjConImgArray.slice(0, 2)
-    let lista2 = pjConImgArray.slice(0, 2)
-
-    lista3 = lista1.concat(lista2)
-    lista3.sort(() => Math.random() - 0.5)
-
-    lista3 = lista3.map(element => {
-      return { ...element, estado: 'tapada'}
-    })
-
+    const personajes = await fetchPersonajes()
+    const cartas = prepareCartas(personajes)
     res.render('index', {
       title: 'El juego de la memoria de Harry Potter',
       message: '-Elige una carta\r -Busca la carta que sea exactamente igual a la que elegiste\r -¡Sí coinciden sumá puntos!',
-      personajes: lista3,
+      personajes: cartas,
       jugador: jugador
     })
   } catch (err) {
@@ -67,48 +49,51 @@ app.get('/game', async (req, res) => {
   }
 })
 
-app.post('/', (req, res) => {
-  jugador = {
-    name: req.body.name,
-    surname: req.body.surname,
-    email: req.body.email
-  },
-  res.redirect('/')
-})
-
 app.post('/save-game', (req, res) => {
   const { jugador, score } = req.body;
-  console.log('jugador recibido', jugador);
-  console.log('puntuacion recibida', score);
+  //console.log('jugador recibido', jugador);
+  //console.log('puntuacion recibida', score);
   saveGameData(jugador, score);
   res.status(200).send('Game data saved')
 });
 
 app.get('/top-score', (req, res) => {
-  let partidas = [];
-  if (fs.existsSync(partidasFile)){
-    partidas = JSON.parse(fs.readFileSync(partidasFile));
-  }
+  const partidas = loadPartidas()
   res.render('top-score', { partidas });
 })
 
 // Funciones
+async function fetchPersonajes() {
+  const response = await axios.get("https://hp-api.onrender.com/api/characters")
+  return response.data.filter(pj => pj.image !== '')
+}
+
+function prepareCartas(personajes) {
+  const cartas = [...personajes, ...personajes]
+    .map(pj => ({ ...pj, estado: 'tapada' }))
+    .sort(() => Math.random() - 0.5)
+    .slice(0, 15)
+  return cartas
+}
+
 function saveGameData(jugador, score) {
   const partida = { jugador, score, date: new Date() };
-  let partidas = [];
-
-  if (fs.existsSync(partidasFile)) {
-    partidas = JSON.parse(fs.readFileSync(partidasFile))
-  }
+  let partidas = loadPartidas();
 
   partidas.push(partida);
-  partidas.sort((a,b) => a.score - b.score);
-  partidas = partidas.slice(0, 20);// limitar a 20 jugadores
+  partidas.sort((a, b) => a.score - b.score);
+  const topPartidas = partidas.slice(0, 20);// limitar a 20 jugadores
 
-  fs.writeFileSync(partidasFile, JSON.stringify(partidas, null, 2));
-
+  fs.writeFileSync(partidasFile, JSON.stringify(topPartidas, null, 2));
   console.log('Partida guardada:', partida);
   console.log('Partidas actuales:', partidas);
+}
+
+function loadPartidas() {
+  if (fs.existsSync(partidasFile)) {
+    return JSON.parse(fs.readFileSync(partidasFile))
+  }
+  return []
 }
 
 app.listen(port, () => {
