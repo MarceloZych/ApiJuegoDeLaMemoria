@@ -48,6 +48,11 @@ document.addEventListener('DOMContentLoaded', () => {
     const img = card.querySelector('.card-img')
     const imgSrc = img.getAttribute('data-image')
 
+    if (img.getAttribute('src') === 'img/images.jpg') {
+      img.setAttribute('src', imgSrc)
+      selectedCards.push(card )
+    }
+
     if (selectedCards.length === 2) {
       lockBoard = true
       setTimeout(() => {
@@ -64,7 +69,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     if (img1 === img2) {
       cards.forEach(card => card.querySelector('.card-img').setAttribute('data-status', 'destapada'))
-      score += Date.now() - startTime + attempts
+      score += 10
       pairsFound++
       if (pairsFound === totalPairs) {
         endGame(score, intervalId)
@@ -86,8 +91,19 @@ document.addEventListener('DOMContentLoaded', () => {
         'Content-Type': 'application/json'
       },
       body: JSON.stringify({ jugador, score })
-    }).then(() => {
+    })
+    .then(response => {
+      if (!response.ok) {
+        throw new Error('Error l guardar los datos del jugador')
+      }
+      return response.text()
+    })
+    .then(() => {
       window.location.href = '/top-score'
+    })
+    .catch(error => {
+      console.error('Error', error)
+      alert('Hubo un problema al guardar el juego. Intenta nuevamente')
     })
   }
 });

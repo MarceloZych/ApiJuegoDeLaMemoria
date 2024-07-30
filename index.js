@@ -69,11 +69,19 @@ async function fetchPersonajes() {
 }
 
 function prepareCartas(personajes) {
-  const cartas = [...personajes, ...personajes]
-    .map(pj => ({ ...pj, estado: 'tapada' }))
-    .sort(() => Math.random() - 0.5)
-    .slice(0, 15)
-  return cartas
+  const cartas = []
+  const totalCartas = 25
+  const pairsCount = Math.floor(totalCartas / 2)
+
+  for (let i = 0;i < pairsCount; i++) {
+    cartas.push(personajes[i])
+    cartas.push({ ...personajes[i], id: `${personajes[i].id}-2`})
+  }
+
+  const cartasConEstado = cartas.map(pj => ({ ...pj, estado: 'tapada' }))
+  const cartasMercladas = cartasConEstado.sort(() => Math.random() - 0.5)
+
+  return cartasMercladas.slice(0, totalCartas)
 }
 
 function saveGameData(jugador, score) {

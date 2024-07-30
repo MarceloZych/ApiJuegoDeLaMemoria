@@ -11,11 +11,12 @@ html
     p= message
     
     .container.hidden
-      each pj, index in personajes
+      each carta in personajes
         .card
-          img.card-img(src=pj.estado == 'tapada' ? 'img/images.jpg' : pj.image, data-image=pj.image, data-status=pj.estado)
-          h6.name-char #{pj.name}
-          p #{pj.id}
+          img.card-img(src='img/images.jpg', data-image=carta.image, data-id=carta.id, data-status=carta.estado)
+          h6.name-char #{carta.name}
+          p #{carta.id}
+
     .scoreboard.hidden
       p#time Contador de segundos: 0
       p#attempts Contador de intentos: 0
