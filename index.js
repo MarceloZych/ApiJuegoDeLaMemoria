@@ -13,9 +13,8 @@ app.set('view engine', 'pug')
 
 app.use(express.static('public'))
 app.use(express.urlencoded({ extended: true }))
-
+   
 let jugador = {}
-let lista3 = []
 
 // Rutas
 app.get('/', (req, res) => {
@@ -51,8 +50,14 @@ app.get('/game', async (req, res) => {
 
 app.post('/save-game', (req, res) => {
   const { jugador, score } = req.body;
-  //console.log('jugador recibido', jugador);
-  //console.log('puntuacion recibida', score);
+
+  if (!jugador || !score) {
+    return res.status(400).send('Error en datos del jugador o puntajes')
+  }
+
+  console.log('jugador recibido', jugador);
+  console.log('puntuacion recibida', score);
+  
   saveGameData(jugador, score);
   res.status(200).send('Game data saved')
 });
@@ -70,7 +75,7 @@ async function fetchPersonajes() {
 
 function prepareCartas(personajes) {
   const cartas = []
-  const totalCartas = 25
+  const totalCartas = 30
   const pairsCount = Math.floor(totalCartas / 2)
 
   for (let i = 0;i < pairsCount; i++) {
@@ -85,16 +90,20 @@ function prepareCartas(personajes) {
 }
 
 function saveGameData(jugador, score) {
-  const partida = { jugador, score, date: new Date() };
-  let partidas = loadPartidas();
+  try {
+    const partida = { jugador, score, date: new Date() };
+    let partidas = loadPartidas();
 
-  partidas.push(partida);
-  partidas.sort((a, b) => a.score - b.score);
-  const topPartidas = partidas.slice(0, 20);// limitar a 20 jugadores
+    partidas.push(partida);
+    partidas.sort((a, b) => a.score - b.score);
+    const topPartidas = partidas.slice(0, 20);
 
-  fs.writeFileSync(partidasFile, JSON.stringify(topPartidas, null, 2));
-  console.log('Partida guardada:', partida);
-  console.log('Partidas actuales:', partidas);
+    fs.writeFileSync(partidasFile, JSON.stringify(topPartidas, null, 2));
+    console.log('Partida guardada:', partida);
+    console.log('Partidas actuales:', partidas);
+  } catch (err) {
+    console.error('Error al guardar los datos de la partida:', err);
+  }
 }
 
 function loadPartidas() {
