@@ -48,18 +48,19 @@ app.get('/game', async (req, res) => {
   }
 })
 
-app.post('/save-game', (req, res) => {
+app.post('/save-game', express.json(), (req, res) => {
   const { jugador, score } = req.body;
+  console.log('Datos recibidos del cliente:', req.body); // Agrega un log para verificar los datos
 
   if (!jugador || !score) {
-    return res.status(400).send('Error en datos del jugador o puntajes')
+    return res.status(400).send('Error en datos del jugador o puntajes');
   }
 
   console.log('jugador recibido', jugador);
   console.log('puntuacion recibida', score);
   
   saveGameData(jugador, score);
-  res.status(200).send('Game data saved')
+  res.status(200).send('Game data saved');
 });
 
 app.get('/top-score', (req, res) => {

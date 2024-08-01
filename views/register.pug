@@ -17,3 +17,20 @@ html
       input#email(type='email', name='email', required)
       br
       button(type='submit') Comenzar Juego
+    script.
+      document.getElementById('registerForm').addEventListener('submit', function(event) {
+        event.preventDefault();
+        const formData = new FormData(this);
+        const jugador = {
+          name: formData.get('name'),
+          surname: formData.get('surname'),
+          email: formData.get('email')
+        };
+        localStorage.setItem('jugador', JSON.stringify(jugador));
+        fetch('/register', {
+          method: 'POST',
+          body: formData
+        }).then(() => {
+          window.location.href = '/game';
+        });
+      });

@@ -94,7 +94,10 @@ document.addEventListener('DOMContentLoaded', () => {
   function endGame(score, intervalId) {
     clearInterval(intervalId);
     alert(`¡Felicidades! Terminaste el juego con un puntaje de ${score}`);
-
+    
+    const jugador = JSON.parse(localStorage.getItem('jugador'));
+    console.log('Datos enviados al servidor:', { jugador, score }); // Agrega un log para verificar los datos
+    
     fetch('/save-game', {
       method: 'POST',
       headers: {
@@ -116,4 +119,5 @@ document.addEventListener('DOMContentLoaded', () => {
       alert('Hubo un problema al guardar el juego. Intenta nuevamente');
     });
   }
+  
 });

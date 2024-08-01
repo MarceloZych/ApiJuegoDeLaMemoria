@@ -1,5 +1,11 @@
 [
   {
-    "date": "2024-07-31T17:06:22.029Z"
+    "jugador": {
+      "name": "marcelo",
+      "surname": "zych",
+      "email": "zych.omarcelo@gmail.com"
+    },
+    "score": 1566,
+    "date": "2024-08-01T11:06:19.418Z"
   }
 ]
